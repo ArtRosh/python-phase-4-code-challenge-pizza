@@ -63,12 +63,31 @@ class Pizzas(Resource):
         return pizzas, 200
     
 
+class RestaurantPizzas(Resource):
+    def post(self):
+        data = request.get_json()
+
+        try:
+            new_record = RestaurantPizza(
+                price=data.get("price"),
+                pizza_id=data.get("pizza_id"),
+                restaurant_id=data.get("restaurant_id")
+            )
+            db.session.add(new_record)
+            db.session.commit()
+        except ValueError as e:
+            db.session.rollback()
+            return {"errors": ["validation errors"]}, 400
+        
+        return new_record.to_dict(), 201
+
+
     
 api.add_resource(Index, "/")
 api.add_resource(Restaurants, "/restaurants")
 api.add_resource(RestaurantById, "/restaurants/<int:id>")
 api.add_resource(Pizzas, "/pizzas")
-
+api.add_resource(RestaurantPizzas, "/restaurant_pizzas")
 
 
 if __name__ == "__main__":
