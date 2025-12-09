@@ -11,7 +11,7 @@ DATABASE = os.environ.get("DB_URI", f"sqlite:///{os.path.join(BASE_DIR, 'app.db'
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-# app.json.compact = False
+
 
 migrate = Migrate(app, db)
 
@@ -53,11 +53,22 @@ class RestaurantById(Resource):
             return {}, 204
         
 
+class Pizzas(Resource):
+    def get(self):
+        pizzas = [
+            p.to_dict(only=("id", "ingredients", "name")) 
+            for p in Pizza.query.all()
+            ]
+
+        return pizzas, 200
     
+
     
 api.add_resource(Index, "/")
 api.add_resource(Restaurants, "/restaurants")
 api.add_resource(RestaurantById, "/restaurants/<int:id>")
+api.add_resource(Pizzas, "/pizzas")
+
 
 
 if __name__ == "__main__":
