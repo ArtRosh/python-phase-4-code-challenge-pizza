@@ -42,7 +42,18 @@ class RestaurantById(Resource):
             return {"error": "Restaurant not found"}, 404
         else:
             return restaurant_by_id.to_dict(), 200
- 
+        
+    def delete(self,id):
+        restaurant_by_id = Restaurant.query.filter_by(id=id).first()
+        if not restaurant_by_id:
+            return {"error": "Restaurant not found"}, 404
+        else:
+            db.session.delete(restaurant_by_id)
+            db.session.commit()
+            return {}, 204
+        
+
+    
     
 api.add_resource(Index, "/")
 api.add_resource(Restaurants, "/restaurants")
