@@ -33,11 +33,20 @@ class Restaurants(Resource):
             ]
 
         return restaurants, 200
+    
 
+class RestaurantById(Resource):
+    def get(self, id):
+        restaurant_by_id = Restaurant.query.filter_by(id=id).first()
+        if not restaurant_by_id:
+            return {"error": "Restaurant not found"}, 404
+        else:
+            return restaurant_by_id.to_dict(), 200
+ 
     
 api.add_resource(Index, "/")
 api.add_resource(Restaurants, "/restaurants")
-
+api.add_resource(RestaurantById, "/restaurants/<int:id>")
 
 
 if __name__ == "__main__":
